@@ -1,6 +1,5 @@
 # Project Title
-Xarb Coin (XRB) Smart Contract
-
+ERC20
 ## Description
 The Xarb Coin (XRB) Smart Contract is a basic implementation of an ERC20 token on the Ethereum blockchain. It provides functionalities for creating, transferring, and managing XRB tokens. The contract adheres to the ERC20 standard, allowing seamless integration with various Ethereum wallets and decentralized applications (dApps).
 
