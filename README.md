@@ -17,8 +17,5 @@ To use the XRB Smart Contract, you don't need to install anything. Simply deploy
 ## Help
 If you encounter any issues or have questions about the Xarb Coin Smart Contract, please feel free to reach out to the contract creator.
 
-## Authors
-[Your Name](https://github.com/yourusername) - [@yourusername](https://twitter.com/yourusername)
-
 ## License
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
