@@ -1,43 +1,67 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.6.12 <0.9.0;
 
-contract SmartContract {
+interface ERC20Interface {
+    function totalSupply() external view returns (uint);
+    function balanceOf(address account) external view returns (uint balance);
+    function allowance(address owner, address spender) external view returns (uint remaining);
+    function transfer(address recipient, uint amount) external returns (bool success);
+    function approve(address spender, uint amount) external returns (bool success);
+    function transferFrom(address sender, address recipient, uint amount) external returns (bool success);
 
-  uint public orderCount;
+    event Transfer(address  indexed from, address indexed to, uint value);
+    event Approval(address indexed owner, address indexed spender, uint value);
+}
 
-  struct Order{
-    address client;
-    uint burgerSelection;
-    bool delivered; 
-  }
 
-  mapping(uint => Order) public orders;
+contract Erc is ERC20Interface{
+    string public symbol;
+    string public name;
+    uint8 public decimals;
+    uint public _totalSupply;
 
-  function placeOrderOld(uint burgerSelection) public payable returns(uint){
-    if(msg.value >= 1 ether){
-      Order memory newOrder = Order(msg.sender, burgerSelection, false);
-      orderCount++;
-      orders[orderCount] = newOrder;
+    mapping(address => uint) balances;
+    mapping(address => mapping(address => uint)) allowed;
+
+    constructor() {
+        symbol = "XRB";
+        name = "Xarb Coin";
+        decimals = 18;
+        _totalSupply = 1_000_001_000_000_000_000_000_000;
+        balances[0x5B38Da6a701c568545dCfcB03FcB875f56beddC4] = _totalSupply;
+        emit Transfer(address(0), 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4, _totalSupply);
     }
-    else{
-      revert("Payment amount is not met.");
+
+    function totalSupply() public view returns (uint) {
+        return _totalSupply - balances[address(0)];
     }
-    return orderCount;
-  }
 
+    function balanceOf(address account) public view returns (uint) {
+        return balances[account];
+    }
 
-  function placeOrder(uint burgerSelection) public payable returns(uint){
-    require(msg.value >= 1 ether);
-   
-      Order memory newOrder = Order(msg.sender, burgerSelection, false);
-      orderCount++;
-      orders[orderCount] = newOrder;
-    
-    return orderCount;
-  }
+    function transfer(address recipient, uint amount) public returns (bool success) {
+        balances[msg.sender] = balances[msg.sender] - amount;
+        balances[recipient] =balances[recipient] + amount;
+        emit Transfer(msg.sender, recipient, amount);
+        return true;
+    }
 
-  function delivered(uint orderNumber) public {
-    orders[orderNumber].delivered = true;
-    assert(orders[orderNumber].delivered == true);
-  }
+    function approve(address spender, uint amount) public returns (bool success) {
+        allowed[msg.sender][spender] = amount;
+        emit Approval(msg.sender, spender, amount);
+        return true;
+    }
+
+    function transferFrom(address sender, address recipient, uint amount) public returns (bool success) {
+        balances[sender] = balances[sender] - amount;
+        allowed[sender][msg.sender] = allowed[sender][msg.sender] - amount;
+        balances[recipient] = balances[recipient] + amount;
+        emit Transfer(sender, recipient, amount);
+        return true;
+    }
+
+    function allowance(address owner, address spender) public view returns (uint remaining) {
+        return allowed[owner][spender];
+    }
 }
